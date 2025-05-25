@@ -5,9 +5,9 @@ export const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   return (
     <div
       className={`
-        fixed top-[60px] left-0 h-full z-10 bg-white border-r border-gray-200 transition-transform duration-300
+        fixed left-0 h-full z-10 bg-white border-r border-gray-200 transition-transform duration-300
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        w-[250px]
+        w-[220px]
       `}
     >
       <div className="p-6 w-full border-b border-gray-200 flex flex-col items-start">

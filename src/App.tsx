@@ -2,18 +2,18 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { Main, Station } from './pages';
-import { Header, Sidebar } from './components';
+import { SidebarRoute } from './route';
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
     <BrowserRouter>
-      <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <Sidebar isOpen={isSidebarOpen} />
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/station" element={<Station />} />
+        <Route element={<SidebarRoute isSidebarOpen={isSidebarOpen} onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />}>
+          <Route path="/" element={<Main />} />
+          <Route path="/station" element={<Station />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

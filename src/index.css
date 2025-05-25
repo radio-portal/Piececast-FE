@@ -12,10 +12,15 @@
 }
 
 body {
-  font-family: 'Pretendard Variable', 'Pretendard', ui-sans-serif, system-ui;
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+* {
+  font-family: 'Pretendard Variable', 'Pretendard', ui-sans-serif, system-ui;
+  position: relative;
+  box-sizing: border-box;
 }
