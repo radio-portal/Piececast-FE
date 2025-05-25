@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -23,4 +25,6 @@ body {
   font-family: 'Pretendard Variable', 'Pretendard', ui-sans-serif, system-ui;
   position: relative;
   box-sizing: border-box;
+  line-height: normal;
+  text-align: left;
 }
