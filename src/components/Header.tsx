@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ onMenuClick }: { onMenuClick: () => void }) => {
   const navigate = useNavigate();
 
   return (
     <header className="fixed top-0 flex bg-white h-[60px] border-b border-gray-200 w-full items-center px-6">
-      <span className="material-symbols-outlined cursor-pointer mr-2">menu</span>
+      <span className="material-symbols-outlined cursor-pointer mr-2" onClick={onMenuClick}>menu</span>
       <img 
         src="/assets/images/logo.svg" 
         alt="logo" 
