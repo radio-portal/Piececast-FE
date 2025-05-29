@@ -9,10 +9,10 @@ interface SidebarLayoutProps {
 const SidebarRoute = ({ isSidebarOpen, onMenuClick }: SidebarLayoutProps) => (
   <>
     <Header onMenuClick={onMenuClick} />
-    <div className="flex">
+    <div className="flex top-[60px]">
       <Sidebar isOpen={isSidebarOpen} />
       <div
-        className={`transition-all duration-300 flex-1 ${isSidebarOpen ? 'ml-0' : 'ml-[-220px]'}`}
+        className={`transition-all duration-300 flex-1 ${isSidebarOpen ? 'ml-[220px]' : 'ml-0'}`}
         style={{ minHeight: '100vh' }}
       >
         <Outlet />
