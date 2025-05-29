@@ -1,12 +1,12 @@
 import { Header, Sidebar, Player } from '@/components';
 import { Outlet } from 'react-router-dom';
 
-interface SidebarLayoutProps {
+interface MainLayoutProps {
   isSidebarOpen: boolean;
   onMenuClick: () => void;
 }
 
-const SidebarRoute = ({ isSidebarOpen, onMenuClick }: SidebarLayoutProps) => (
+const MainLayout = ({ isSidebarOpen, onMenuClick }: MainLayoutProps) => (
   <>
     <Header onMenuClick={onMenuClick} />
     <div className="flex h-[calc(100%-130px)] top-[60px] overflow-scroll">
@@ -21,4 +21,4 @@ const SidebarRoute = ({ isSidebarOpen, onMenuClick }: SidebarLayoutProps) => (
   </>
 );
 
-export default SidebarRoute;
+export default MainLayout;
