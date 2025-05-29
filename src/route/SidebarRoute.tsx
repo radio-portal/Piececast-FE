@@ -1,4 +1,4 @@
-import { Header, Sidebar } from '@/components';
+import { Header, Sidebar, Player } from '@/components';
 import { Outlet } from 'react-router-dom';
 
 interface SidebarLayoutProps {
@@ -9,16 +9,16 @@ interface SidebarLayoutProps {
 const SidebarRoute = ({ isSidebarOpen, onMenuClick }: SidebarLayoutProps) => (
   <>
     <Header onMenuClick={onMenuClick} />
-    <div className="flex top-[60px]">
+    <div className="flex h-[calc(100%-130px)] top-[60px] overflow-scroll">
       <Sidebar isOpen={isSidebarOpen} />
       <div
         className={`transition-all duration-300 flex-1 ${isSidebarOpen ? 'ml-[220px]' : 'ml-0'}`}
-        style={{ minHeight: '100vh' }}
       >
         <Outlet />
       </div>
     </div>
+    <Player />
   </>
 );
 
-export default SidebarRoute; 
+export default SidebarRoute;
