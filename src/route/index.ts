@@ -1,1 +1,1 @@
-export { default as SidebarRoute } from './SidebarRoute';
+export { default as MainLayout } from './MainLayout';
