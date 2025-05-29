@@ -1,7 +1,7 @@
 const logoClass = "w-[35px] h-[35px] rounded-[10px] border border-gray-200 mr-[10px]";
 const itemClass = "flex items-center cursor-pointer";
 
-export const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
+const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   return (
     <div
       className={`
