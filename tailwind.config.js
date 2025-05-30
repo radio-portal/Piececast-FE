@@ -11,6 +11,7 @@ export default {
         backgroundLight: '#F4F6F8',
         lightBlue: '#4F6FCB',
         blue: '#1877F2',
+        gray2: '#222222',
         gray3: '#333333',
         gray5: '#555555',
         gray7: '#777777',
