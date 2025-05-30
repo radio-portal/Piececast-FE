@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { Main, Station, Player } from './pages';
+import { Main, Station, Player, Program } from './pages';
 import { MainLayout } from './route';
 
 const App = () => {
@@ -14,6 +14,7 @@ const App = () => {
           <Route path="/" element={<Main />} />
           <Route path="/station" element={<Station />} />
           <Route path="/player" element={<Player />} />
+          <Route path="/program" element={<Program />} />
         </Route>
       </Routes>
     </BrowserRouter>
