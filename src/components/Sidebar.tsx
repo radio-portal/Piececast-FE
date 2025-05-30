@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom';
+
 const logoClass = "w-[35px] h-[35px] rounded-[10px] border border-gray-200 mr-[10px]";
 const itemClass = "flex items-center cursor-pointer";
 
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
+  const navigate = useNavigate();
   return (
     <div
       className={`
@@ -13,15 +16,15 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
       <div className="p-6 w-full border-b border-gray-200 flex flex-col items-start">
         <p className="font-bold text-lg">방송사 홈</p>
         <div className="flex flex-col mt-[10px] gap-[8px] w-full">
-          <div className={itemClass}>
+          <div className={itemClass} onClick={() => navigate('/station')}>
             <img className={logoClass} src="/assets/images/kbs-logo.jpg" />
             <p className="font-medium">KBS</p>
           </div>
-          <div className={itemClass}>
+          <div className={itemClass} onClick={() => navigate('/station')}>
             <img className={logoClass} src="/assets/images/mbc-logo.jpg" />
             <p className="font-medium">MBC</p>
           </div>
-          <div className={itemClass}>
+          <div className={itemClass} onClick={() => navigate('/station')}>
             <img className={logoClass} src="/assets/images/sbs-logo.jpg" />
             <p className="font-medium">SBS</p>
           </div>
