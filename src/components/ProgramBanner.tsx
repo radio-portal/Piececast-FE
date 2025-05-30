@@ -1,4 +1,9 @@
-export const Banner = () => {
+interface ProgramBannerProps {
+  viewType: 'episode' | 'clip';
+  onViewTypeChange: (type: 'episode' | 'clip') => void;
+}
+
+export const ProgramBanner = ({ viewType, onViewTypeChange }: ProgramBannerProps) => {
   return (
     <div className="w-full h-[144px] bg-lightBlue text-white px-[120px] flex justify-center items-start flex-col gap-[7px]">
       <div className="flex items-center justify-center">
@@ -12,8 +17,18 @@ export const Banner = () => {
         </div>
       </div>
       <div className="flex items-center justify-center gap-[24px]">
-        <p className="cursor-pointer font-semibold">회차별 보기</p>
-        <p className="cursor-pointer font-semibold">클립별 보기</p>
+        <p 
+          className={`cursor-pointer font-semibold ${viewType === 'episode' ? 'text-white' : 'text-gray-300'}`}
+          onClick={() => onViewTypeChange('episode')}
+        >
+          회차별 보기
+        </p>
+        <p 
+          className={`cursor-pointer font-semibold ${viewType === 'clip' ? 'text-white' : 'text-gray-300'}`}
+          onClick={() => onViewTypeChange('clip')}
+        >
+          클립별 보기
+        </p>
       </div>
     </div>
   )
