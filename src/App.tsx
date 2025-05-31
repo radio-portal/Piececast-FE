@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { Main, Station, Player, Program, Guide } from './pages';
+import { Main, Station, Player, Program, Guide, Login, Callback } from './pages';
 import { MainLayout } from './route';
 
 const App = () => {
@@ -17,6 +17,8 @@ const App = () => {
           <Route path="/program" element={<Program />} />
           <Route path="/guide" element={<Guide />} />
         </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/callback" element={<Callback />} />
       </Routes>
     </BrowserRouter>
   );
