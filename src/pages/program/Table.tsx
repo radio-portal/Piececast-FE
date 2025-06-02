@@ -3,6 +3,7 @@ import type { SortingState } from '@tanstack/react-table';
 import { useState } from 'react';
 import { formatDateWithWeekday } from '@/utils/date';
 import type { Episode, Clip } from './types';
+import { useNavigate } from 'react-router-dom';
 
 const episodeList = [
   {
@@ -192,6 +193,7 @@ interface TableProps {
 
 const Table = ({ viewType }: TableProps) => {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const navigate = useNavigate();
 
   const table = useReactTable({
     data: viewType === 'episode' ? episodeList : clipList,
@@ -245,7 +247,7 @@ const Table = ({ viewType }: TableProps) => {
           </thead>
           <tbody>
             {table.getRowModel().rows.map(row => (
-              <tr key={row.id}>
+              <tr key={row.id} onClick={() => navigate(`/player?id=${row.original.id}`)}>
                 {row.getVisibleCells().map(cell => (
                   <td key={cell.id} className="border-b border-gray-200 px-[22px] py-[10px] text-[14px] text-center cursor-pointer">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

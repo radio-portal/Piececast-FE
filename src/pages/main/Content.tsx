@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 const cards = [
   { id: 1, station: "SBS", image:"https://image.cloud.sbs.co.kr/2021/11/10/GGu1636508361923.jpg", date: "2025-05-30", program: "두시탈출 컬투쇼", contents: [
     { id: 1, title: "청취자 웃음참기 대결, 김태균도 울었다?! 생방송 '최고의 사연'" },
@@ -114,6 +116,7 @@ cards.forEach((card, idx) => {
 console.log(columns);
 
 const Content = () => {
+  const navigate = useNavigate();
   return (
     <div className="w-full flex gap-[20px] bg-backgroundLight p-[40px]">
       {columns.map((col, colIdx) => (
@@ -131,6 +134,7 @@ const Content = () => {
               {card.contents.map((content, idx) => (
                 <div
                   key={idx}
+                  onClick={() => navigate(`/player?id=${card.id}&contentId=${content.id}`)}
                   className={
                     "text-gray3 font-semibold py-[8px] text-[14px] cursor-pointer " +
                     (idx !== 0 ? "border-t border-gray-200" : "")
