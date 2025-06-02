@@ -67,8 +67,8 @@ const Player = () => {
         <div className="flex items-center">
           <img src="/assets/images/superradio.jpg" alt="logo" className="w-[54px] h-[54px] rounded-[4px] border border-gray-200 mr-[12px]" />
           <div>
-            <p className="font-semibold ">하디의 목소리로 기분 업! 오늘의 음악과 사연들</p>
-            <p className="text-sm text-gray7">하하의 슈퍼라디오 • 25년 5월 8일 월요일 방송</p>
+            <p className="font-semibold ">이제는 말할 수 있다! 청춘의 끝에서 시작된 진짜 인생</p>
+            <p className="text-sm text-gray7">하하의 슈퍼라디오 • 25년 5월 30일 월요일 방송</p>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center gap-[8px]">
