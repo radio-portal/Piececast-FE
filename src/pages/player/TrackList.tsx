@@ -15,6 +15,13 @@ interface Device {
 	type: string;
 }
 
+interface TrackListProps {
+	currentTrack: string | null;
+	setCurrentTrack: (track: string | null) => void;
+	isPlaying: boolean;
+	setIsPlaying: (isPlaying: boolean) => void;
+}
+
 const refreshAccessToken = async () => {
 	const refreshToken = localStorage.getItem('spotify_refresh_token');
 	const clientId = localStorage.getItem('spotify_client_id');
@@ -51,7 +58,7 @@ const refreshAccessToken = async () => {
 	}
 };
 
-export const TrackList = () => {
+export const TrackList = ({ currentTrack, setCurrentTrack, isPlaying, setIsPlaying }: TrackListProps) => {
 	const [trackList, setTrackList] = useState<Track[]>([
 		{
 			id: 1,
@@ -90,9 +97,6 @@ export const TrackList = () => {
 			image: ''
 		}
 	]);
-
-	const [currentTrack, setCurrentTrack] = useState<string | null>(null);
-	const [isPlaying, setIsPlaying] = useState(false);
 
 	useEffect(() => {
 		const searchTracks = async () => {

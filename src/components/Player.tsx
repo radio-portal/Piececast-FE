@@ -65,10 +65,10 @@ const Player = () => {
       </div>
       <div className="w-full h-full px-[25px] grid grid-cols-3 items-center">
         <div className="flex items-center">
-          <img src="/assets/images/superradio.jpg" alt="logo" className="w-[54px] h-[54px] rounded-[4px] border border-gray-200 mr-[12px]" />
+          <img src="https://podcastaddict.com/cache/artwork/thumb/396347" alt="logo" className="w-[54px] h-[54px] rounded-[4px] border border-gray-200 mr-[12px]" />
           <div>
             <p className="font-semibold ">이제는 말할 수 있다! 청춘의 끝에서 시작된 진짜 인생</p>
-            <p className="text-sm text-gray7">하하의 슈퍼라디오 • 25년 5월 30일 월요일 방송</p>
+            <p className="text-sm text-gray7">김이나의 별이 빛나는 밤에 • 25년 5월 30일 월요일 방송</p>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center gap-[8px]">

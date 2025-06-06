@@ -19,8 +19,8 @@ const programList = {
 		},
 		{
 			id: 4,
-			name: '하하의 슈퍼라디오',
-			image: 'https://img.kbs.co.kr/kbs/228x228/programres.kbs.co.kr/r2024-0241/2024/11/18/1731911757970_552224.jpg',
+			name: '김이나의 별이 빛나는 밤에',
+			image: 'https://podcastaddict.com/cache/artwork/thumb/396347',
 		},
 		{
 			id: 5,

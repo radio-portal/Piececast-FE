@@ -19,7 +19,7 @@ const cards = [
     { id: 15, title: "두시탈출 컬투쇼, 역대 가장 웃긴 청취자 사연 TOP10" },
     { id: 16, title: "직장인 청취자 눈물...'내 상사에게 하고 싶은 말' 사연 모음" },
   ] },
-  { id: 2, station: "KBS", image:"https://img.kbs.co.kr/kbs/228x228/programres.kbs.co.kr/r2024-0241/2024/11/18/1731911757970_552224.jpg", date: "2025-05-30", program: "하하의 슈퍼라디오", contents: [
+  { id: 2, station: "MBC", image:"https://podcastaddict.com/cache/artwork/thumb/396347", date: "2025-05-30", program: "김이나의 별이 빛나는 밤에", contents: [
     { id: 1, title: "이제는 말할 수 있다! 청춘의 끝에서 시작된 진짜 인생" },
     { id: 2, title: "캠퍼스에 이런 일이? 대학생들만 아는 진짜 축제 뒷이야기" },
     { id: 3, title: "졸업생도 몰랐던, 캠퍼스 전설의 비밀장소들...직접 다녀왔습니다" },
