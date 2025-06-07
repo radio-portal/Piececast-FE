@@ -59,7 +59,6 @@ const Callback = () => {
           }
         } catch (error) {
           console.error('Error in getAccessToken:', error);
-          navigate('/login');
         }
       };
 
