@@ -1,9 +1,12 @@
 import { ProgramBanner } from "@/components/ProgramBanner";
 import Table from "./Table";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const Program = () => {
-  const [viewType, setViewType] = useState<'episode' | 'clip'>('episode');
+  const [searchParams] = useSearchParams();
+  const initialViewType = (searchParams.get('viewType') === 'clip') ? 'clip' : 'episode';
+  const [viewType, setViewType] = useState<'episode' | 'clip'>(initialViewType);
 
   return (
     <div className="flex flex-col w-full">

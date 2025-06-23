@@ -1,5 +1,5 @@
 interface ProgramBannerProps {
-  viewType: 'episode' | 'clip';
+  viewType: 'episode' | 'clip' | null;
   onViewTypeChange: (type: 'episode' | 'clip') => void;
 }
 
