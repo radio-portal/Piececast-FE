@@ -13,7 +13,7 @@ const App = () => {
         <Route element={<MainLayout isSidebarOpen={isSidebarOpen} onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />}>
           <Route path="/" element={<Main />} />
           <Route path="/station" element={<Station />} />
-          <Route path="/player" element={<Player />} />
+          <Route path="/player/:episodeId/:pieceId" element={<Player />} />
           <Route path="/program" element={<Program />} />
           <Route path="/guide" element={<Guide />} />
         </Route>
