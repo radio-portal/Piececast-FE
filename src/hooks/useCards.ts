@@ -2,7 +2,7 @@
   import { get } from '@/api/base';
   import type { Card } from '@/types/cards';
 
-  export const usePieces = () => {
+  export const useCards = () => {
     const [cards, setCards] = useState<Card[]>([]);
     const [mainCards, setMainCards] = useState<Card[][]>(Array.from({ length: 3 }, () => []));
 
@@ -10,6 +10,7 @@
       const fetchCards = async () => {
         try {
           const response = await get('/programs/latest');
+          console.log('response', response.data);
           setCards(response.data);
           
           const newMainCards: Card[][] = Array.from({ length: 3 }, () => []);

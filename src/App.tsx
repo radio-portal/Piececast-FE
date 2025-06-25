@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { Main, Station, Player, Program, Guide, Login, Callback } from './pages';
+import { Main, Station, Episode, Program, Guide, Login, Callback } from './pages';
 import { MainLayout } from './route';
 
 const App = () => {
@@ -13,7 +13,7 @@ const App = () => {
         <Route element={<MainLayout isSidebarOpen={isSidebarOpen} onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />}>
           <Route path="/" element={<Main />} />
           <Route path="/station" element={<Station />} />
-          <Route path="/player/:episodeId/:pieceId" element={<Player />} />
+          <Route path="/episode/:episodeId/:pieceId" element={<Episode />} />
           <Route path="/program" element={<Program />} />
           <Route path="/guide" element={<Guide />} />
         </Route>

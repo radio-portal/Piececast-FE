@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { usePieces } from "@/hooks/usePieces";
+import { useCards } from "@/hooks/useCards";
 import type { Card } from "@/types/cards";
 
 const Content = () => {
-  const { mainCards } = usePieces();
+  const { mainCards } = useCards();
   const navigate = useNavigate();
   return (
     <div className="w-full flex gap-[20px] bg-backgroundLight p-[40px] flex-1">
@@ -22,7 +22,7 @@ const Content = () => {
               {card.pieces.map((piece, idx) => (
                 <div
                   key={idx}
-                  onClick={() => navigate(`/player/${card.episodeId}/${piece.pieceId}`)}
+                  onClick={() => navigate(`/episode/${card.episodeId}/${piece.pieceId}`)}
                   className={
                     "text-gray3 font-semibold py-[8px] text-[14px] cursor-pointer " +
                     (idx !== 0 ? "border-t border-gray-200" : "")
