@@ -1,4 +1,5 @@
 import Piece from "./Piece";
+import type { EpisodeApiResponse } from "./types";
 
 interface PieceListProps {
   pieceId: number;
@@ -10,10 +11,12 @@ interface PieceListProps {
   selected: string[];
   handleTagSelect: (tag: string) => void;
   filteredItems: any[];
+  programInfo: EpisodeApiResponse | null;
 }
 
 export const PieceList = ({ 
   pieceId,
+  programInfo,
   currentTrack, 
   setCurrentTrack, 
   isPlaying, 
@@ -26,7 +29,10 @@ export const PieceList = ({
 
   return (
     <div className="w-full mt-[35px] flex flex-col items-start justify-center">
-      <p className="text-[20px] font-semibold mb-[10px]">프로그램 요약</p>
+      <div className="w-full flex items-center gap-[10px]  mb-[10px]">
+        <p className="text-[20px] font-semibold">프로그램 요약</p>
+        <button className="px-[14px] py-[4px] rounded-full text-[14px] transition-colors bg-blue text-white">전체 재생 🎧</button>
+      </div>
       <div className="w-full flex items-center justify-start gap-[10px]">
         {tags.map((tag) => (
           <button
@@ -51,8 +57,10 @@ export const PieceList = ({
           filteredItems.map((item: any) => (
             <Piece
               key={item.pieceId}
-              pieceId={pieceId}
+              pieceId={item.pieceId}
+              currentPieceId={pieceId}
               item={item}
+              programInfo={programInfo}
               handleTagSelect={handleTagSelect}
               selected={selected}
               currentTrack={currentTrack}

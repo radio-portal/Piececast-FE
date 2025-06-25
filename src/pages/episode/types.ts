@@ -28,7 +28,9 @@ export interface TrackApiResponse {
 
 export interface PieceProps {
   pieceId: number;
+  currentPieceId: number;
   item: any;
+  programInfo: EpisodeApiResponse;
   handleTagSelect: (tag: string) => void;
   selected: string[];
   currentTrack: string | null;
@@ -53,12 +55,14 @@ export interface Piece {
   }[];
 }
 
+export interface Program {
+  id: number;
+  name: string;
+  thumbnailUrl: string;
+}
+
 export interface EpisodeApiResponse {
-  program: {
-    id: number;
-    name: string;
-    thumbnailUrl: string;
-  };
+  program: Program;
   episode: {
     episodeId: number;
     date: string;

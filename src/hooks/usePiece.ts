@@ -1,20 +1,36 @@
 import { useEffect, useState } from 'react';
 import useSpotify from './useSpotify';
+import { usePlayerContext } from '@/contexts/PlayerContext';
 
 interface usePieceProps {
   item: any;
+  programInfo: any;
   pieceId: number;
+  currentPieceId: number;
   currentTrack: string | null;
   setCurrentTrack: (track: string | null) => void;
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
 }
 
-const usePiece = ({ item, pieceId, currentTrack, setCurrentTrack, isPlaying, setIsPlaying }: usePieceProps) => {
+const usePiece = ({ item, programInfo, pieceId, currentPieceId, currentTrack, setCurrentTrack, isPlaying, setIsPlaying }: usePieceProps) => {
   const [isActive, setIsActive] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { handleMusicClick, fetchSpotifyTrackInfo } = useSpotify();
   const [musicSpotifyData, setMusicSpotifyData] = useState<{ [key: string]: { spotifyUri: string; imageUrl: string } }>({});
+
+  const { currentPlayingPieceId, setPlayerAudio, playerInfo } = usePlayerContext();
+  const handlePieceClick = () => {
+    if (item.mp3Path) {
+      setPlayerAudio(
+        pieceId,
+        item.mp3Path,
+        item.title,
+        programInfo.program.name || '프로그램명',
+        programInfo.episode.date || '날짜'
+      );
+    }
+  };
 
   // 단일 조각의 활성화 상태 관리
   const toggleActive = () => {
@@ -27,11 +43,21 @@ const usePiece = ({ item, pieceId, currentTrack, setCurrentTrack, isPlaying, set
   };
 
   useEffect(() => {
-    if (item.pieceId == pieceId) {
+    if (currentPlayingPieceId === pieceId && item.pieceId === pieceId) {
+      setIsOpen(true);
+      setIsActive(true);
+    } else {
+      setIsOpen(false);
+      setIsActive(false);
+    }
+  }, [item, currentPlayingPieceId, pieceId]);
+
+  useEffect(() => {
+    if (item.pieceId == currentPieceId) {
       setIsActive(true);
       setIsOpen(true);
     }
-  }, [item, pieceId]);
+  }, [item, currentPieceId]);
 
   // 페이지 진입 시 모든 음악에 대해 Spotify 이미지 미리 받아오기 (재생하지 않음)
   useEffect(() => {
@@ -80,6 +106,9 @@ const usePiece = ({ item, pieceId, currentTrack, setCurrentTrack, isPlaying, set
     handleToggle,
     musicSpotifyData,
     handleMusicClickWrapper,
+    setPlayerAudio,
+    playerInfo,
+    handlePieceClick
   };
 };
 

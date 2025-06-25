@@ -1,45 +1,27 @@
-import { useState, useRef } from 'react';
 import { TogglePlayButton } from '@/assets/TogglePlayButton';
 import ReactPlayer from 'react-player';
+import { usePlayerContext } from '@/contexts/PlayerContext';
 
 const Player = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [played, setPlayed] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [playedSeconds, setPlayedSeconds] = useState(0);
-  const playerRef = useRef<ReactPlayer>(null);
-
-  const handleTogglePlay = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleProgress = (state: { played: number; playedSeconds: number }) => {
-    setPlayed(state.played);
-    setPlayedSeconds(state.playedSeconds);
-  };
-
-  const handleDuration = (duration: number) => {
-    setDuration(duration);
-  };
-
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const seekTime = parseFloat(e.target.value);
-    setPlayed(seekTime);
-    playerRef.current?.seekTo(seekTime);
-  };
-
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
+  const {
+    isPlaying,
+    played,
+    duration,
+    playedSeconds,
+    playerInfo,
+    playerRef,
+    handleTogglePlay,
+    handleProgress,
+    handleDuration,
+    handleSeek,
+    formatTime,
+  } = usePlayerContext();
 
   return (
     <div className="fixed z-20 bottom-0 w-full h-[70px] bg-white border-t border-gray-200">
       <ReactPlayer
         ref={playerRef}
-        url="/assets/mbc-2200.mp3"
+        url={playerInfo.audioPath}
         playing={isPlaying}
         onProgress={handleProgress}
         onDuration={handleDuration}
@@ -67,8 +49,8 @@ const Player = () => {
         <div className="flex items-center">
           <img src="https://podcastaddict.com/cache/artwork/thumb/396347" alt="logo" className="w-[54px] h-[54px] rounded-[4px] border border-gray-200 mr-[12px]" />
           <div>
-            <p className="font-semibold ">이제는 말할 수 있다! 청춘의 끝에서 시작된 진짜 인생</p>
-            <p className="text-sm text-gray7">김이나의 별이 빛나는 밤에 • 25년 5월 30일 월요일 방송</p>
+            <p className="font-semibold ">{playerInfo.title}</p>
+            <p className="text-sm text-gray7">{playerInfo.programName} • {playerInfo.date}</p>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center gap-[8px]">
