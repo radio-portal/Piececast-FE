@@ -3,25 +3,20 @@ import { refreshAccessToken } from '@/utils/spotify';
 
 // Spotify API 요청을 위한 헬퍼 함수
 const makeSpotifyRequest = async (url: string, token: string, retryCount: number = 0): Promise<Response> => {
-  
   const response = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+    headers: { 'Authorization': `Bearer ${token}` }
   });
-  
+
   if (response.status === 429) {
     const retryAfter = response.headers.get('Retry-After');
     const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 5000;
-    console.log(`Rate limited. Waiting ${waitTime}ms before retry. (Attempt ${retryCount + 1})`);
+    console.warn(`Rate limited. Waiting ${waitTime}ms before retry. (Attempt ${retryCount + 1})`);
     await new Promise(resolve => setTimeout(resolve, waitTime));
-    
-    // 최대 3번까지 재시도
     if (retryCount < 3) {
       return makeSpotifyRequest(url, token, retryCount + 1);
     }
   }
-  
+
   return response;
 };
 
@@ -43,8 +38,7 @@ const makeSpotifyPutRequest = async (url: string, token: string, body?: any, ret
     console.log(`Rate limited. Waiting ${waitTime}ms before retry. (Attempt ${retryCount + 1})`);
     await new Promise(resolve => setTimeout(resolve, waitTime));
     
-    // 최대 3번까지 재시도
-    if (retryCount < 3) {
+    if (retryCount < 2) {
       return makeSpotifyPutRequest(url, token, body, retryCount + 1);
     }
   }
@@ -66,44 +60,45 @@ const useSpotify = () => {
       console.log('No Spotify token found');
       return;
     }
-    
-    const updatedItems = await Promise.all(
-      items.map(async (item, index) => {
-        try {
-          // 요청 간격을 늘려서 rate limit 방지
-          if (index > 0) {
-            await new Promise(resolve => setTimeout(resolve, 200)); // 200ms 간격으로 증가
+  
+    const updatedItems = [];
+    for (const item of items) {
+      try {
+        const query = getQuery(item);
+        let response = await makeSpotifyRequest(
+          `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
+          token!
+        );
+  
+        // 401 처리 (액세스 토큰 만료)
+        if (response.status === 401) {
+          token = await refreshAccessToken();
+          if (!token) {
+            updatedItems.push(item);
+            continue;
           }
-          
-          const query = getQuery(item);
-          let response = await makeSpotifyRequest(
+          response = await makeSpotifyRequest(
             `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-            token!
+            token
           );
-          
-          if (response.status === 401) {
-            token = await refreshAccessToken();
-            if (!token) return item;
-            response = await makeSpotifyRequest(
-              `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-              token
-            );
-          }
-          
-          if (response.ok) {
-            const data = await response.json();
-            if (data.tracks.items.length > 0) {
-              const spotifyTrack = data.tracks.items[0];
-              return updateItem(item, spotifyTrack);
-            }
-          }
-          return item;
-        } catch (error) {
-          console.error('Error searching track:', error);
-          return item;
         }
-      })
-    );
+  
+        if (response.ok) {
+          const data = await response.json();
+          if (data.tracks.items.length > 0) {
+            const spotifyTrack = data.tracks.items[0];
+            updatedItems.push(updateItem(item, spotifyTrack));
+          } else {
+            updatedItems.push(item);
+          }
+        } else {
+          updatedItems.push(item);
+        }
+      } catch (error) {
+        console.error('Error searching track:', error);
+        updatedItems.push(item);
+      }
+    }
     setItems(updatedItems);
   };
 
