@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { ApiGet, ApiWithData } from './types';
 
-export const API_BASE = 'http://35.209.10.234:8080/api';
+export const API_BASE = 'https://piececast.store/api';
 const axiosClient = axios.create({
   baseURL: API_BASE,
   timeout: 100000,
