@@ -12,7 +12,7 @@ const Content = () => {
           {col.map((card: Card) => (
             <div key={card.episodeId} className="flex flex-col w-full bg-white rounded-[10px] px-[22px] py-[14px]">
               <div className="flex w-full border-b border-gray-300 items-center pb-[12px]">
-                <img src={card.image} alt={card.programName} className="w-[40px] h-[40px] rounded-full" />
+                <img src={card.thumbnailUrl} alt={card.programName} className="w-[40px] h-[40px] rounded-full" />
                 <div className="flex flex-col items-start justify-between ml-[10px] grow">
                   <div className="font-bold text-lg text-gray2 flex-1 leading-[1] cursor-pointer">{card.programName}</div>
                   <div className="text-gray9 text-[14px] ">{card.station}</div>

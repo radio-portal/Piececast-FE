@@ -8,7 +8,7 @@ export interface Card {
   episodeId: number;
   programName: string;
   station: string;
-  image: string;
+  thumbnailUrl: string;
   latestEpisodeDate: string;
   pieces: Piece[];
 }
