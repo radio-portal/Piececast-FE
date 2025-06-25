@@ -1,6 +1,92 @@
 import type { Track, Device } from '@/pages/episode/types';
 import { refreshAccessToken } from '@/utils/spotify';
 
+// 캐시 관련 타입 정의
+interface CacheItem {
+  data: any;
+  timestamp: number;
+  expiresAt: number;
+}
+
+interface SpotifyCache {
+  [key: string]: CacheItem;
+}
+
+// 캐시 설정
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24시간 (밀리초)
+const CACHE_KEY = 'spotify_track_cache';
+
+// 캐시 유틸리티 함수들
+const generateCacheKey = (query: string): string => {
+  return `spotify_search_${encodeURIComponent(query)}`;
+};
+
+const getCache = (): SpotifyCache => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    return cached ? JSON.parse(cached) : {};
+  } catch (error) {
+    console.error('캐시 읽기 오류:', error);
+    return {};
+  }
+};
+
+const setCache = (cache: SpotifyCache): void => {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  } catch (error) {
+    console.error('캐시 저장 오류:', error);
+  }
+};
+
+const getCachedData = (query: string): any | null => {
+  const cache = getCache();
+  const key = generateCacheKey(query);
+  const item = cache[key];
+  
+  if (!item) return null;
+  
+  // 캐시 만료 확인
+  if (Date.now() > item.expiresAt) {
+    delete cache[key];
+    setCache(cache);
+    return null;
+  }
+  
+  return item.data;
+};
+
+const setCachedData = (query: string, data: any): void => {
+  const cache = getCache();
+  const key = generateCacheKey(query);
+  
+  cache[key] = {
+    data,
+    timestamp: Date.now(),
+    expiresAt: Date.now() + CACHE_DURATION
+  };
+  
+  setCache(cache);
+};
+
+// 캐시 정리 함수 (만료된 항목들 제거)
+const cleanupCache = (): void => {
+  const cache = getCache();
+  const now = Date.now();
+  let hasChanges = false;
+  
+  Object.keys(cache).forEach(key => {
+    if (now > cache[key].expiresAt) {
+      delete cache[key];
+      hasChanges = true;
+    }
+  });
+  
+  if (hasChanges) {
+    setCache(cache);
+  }
+};
+
 // Spotify API 요청을 위한 헬퍼 함수
 const makeSpotifyRequest = async (url: string, token: string, retryCount: number = 0): Promise<Response> => {
   const response = await fetch(url, {
@@ -46,9 +132,63 @@ const makeSpotifyPutRequest = async (url: string, token: string, body?: any, ret
   return response;
 };
 
+// 캐시된 Spotify 검색 함수
+const searchSpotifyWithCache = async (query: string, token: string): Promise<any | null> => {
+  // 캐시 정리
+  cleanupCache();
+  
+  // 캐시에서 먼저 확인
+  const cachedData = getCachedData(query);
+  if (cachedData) {
+    console.log('캐시에서 트랙 정보를 찾았습니다:', query);
+    return cachedData;
+  }
+  
+  // 캐시에 없으면 API 호출
+  console.log('Spotify API에서 트랙을 검색합니다:', query);
+  try {
+    const response = await makeSpotifyRequest(
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
+      token
+    );
+    
+    if (response.status === 401) {
+      const newToken = await refreshAccessToken();
+      if (!newToken) return null;
+      
+      const retryResponse = await makeSpotifyRequest(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
+        newToken
+      );
+      
+      if (retryResponse.ok) {
+        const data = await retryResponse.json();
+        if (data.tracks.items.length > 0) {
+          setCachedData(query, data.tracks.items[0]);
+          return data.tracks.items[0];
+        }
+      }
+      return null;
+    }
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.tracks.items.length > 0) {
+        setCachedData(query, data.tracks.items[0]);
+        return data.tracks.items[0];
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Spotify 검색 오류:', error);
+    return null;
+  }
+};
+
 // Spotify 관련 커스텀 훅
 const useSpotify = () => {
-  // 트랙 검색 (여러 트랙)
+  // 트랙 검색 (여러 트랙) - 캐싱 적용
   const searchTracks = async (
     items: { title: string; artist: string; image?: string; [key: string]: any }[],
     setItems: (items: any[]) => void,
@@ -65,32 +205,10 @@ const useSpotify = () => {
     for (const item of items) {
       try {
         const query = getQuery(item);
-        let response = await makeSpotifyRequest(
-          `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-          token!
-        );
-  
-        // 401 처리 (액세스 토큰 만료)
-        if (response.status === 401) {
-          token = await refreshAccessToken();
-          if (!token) {
-            updatedItems.push(item);
-            continue;
-          }
-          response = await makeSpotifyRequest(
-            `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-            token
-          );
-        }
-  
-        if (response.ok) {
-          const data = await response.json();
-          if (data.tracks.items.length > 0) {
-            const spotifyTrack = data.tracks.items[0];
-            updatedItems.push(updateItem(item, spotifyTrack));
-          } else {
-            updatedItems.push(item);
-          }
+        const spotifyTrack = await searchSpotifyWithCache(query, token);
+        
+        if (spotifyTrack) {
+          updatedItems.push(updateItem(item, spotifyTrack));
         } else {
           updatedItems.push(item);
         }
@@ -194,7 +312,7 @@ const useSpotify = () => {
     }
   };
 
-  // 단일 음악 검색 및 재생
+  // 단일 음악 검색 및 재생 - 캐싱 적용
   const handleMusicClick = async (
     title: string,
     artist: string,
@@ -210,34 +328,15 @@ const useSpotify = () => {
     }
     
     try {
-      // 먼저 Spotify에서 음악 검색
+      // 캐시된 검색 사용
       const query = `${title} ${artist}`;
-      let searchResponse = await makeSpotifyRequest(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-        token
-      );
+      const spotifyTrack = await searchSpotifyWithCache(query, token);
       
-      if (searchResponse.status === 401) {
-        token = await refreshAccessToken();
-        if (!token) return null;
-        searchResponse = await makeSpotifyRequest(
-          `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-          token
-        );
-      }
-      
-      if (!searchResponse.ok) {
-        console.error('Failed to search track');
-        return null;
-      }
-      
-      const searchData = await searchResponse.json();
-      if (searchData.tracks.items.length === 0) {
+      if (!spotifyTrack) {
         console.log('No track found for:', query);
         return null;
       }
       
-      const spotifyTrack = searchData.tracks.items[0];
       const spotifyUri = spotifyTrack.uri;
       const imageUrl = spotifyTrack.album.images[0]?.url || '/assets/images/spotifyLoading.jpg';
       
@@ -349,7 +448,7 @@ const useSpotify = () => {
     }
   };
 
-  // Spotify에서 트랙 정보만 검색 (재생하지 않음)
+  // Spotify에서 트랙 정보만 검색 (재생하지 않음) - 캐싱 적용
   const fetchSpotifyTrackInfo = async (title: string, artist: string): Promise<{ spotifyUri: string; imageUrl: string } | null> => {
     let token = localStorage.getItem('spotify_access_token');
     if (!token) {
@@ -359,32 +458,13 @@ const useSpotify = () => {
     
     try {
       const query = `${title} ${artist}`;
-      let searchResponse = await makeSpotifyRequest(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-        token
-      );
+      const spotifyTrack = await searchSpotifyWithCache(query, token);
       
-      if (searchResponse.status === 401) {
-        token = await refreshAccessToken();
-        if (!token) return null;
-        searchResponse = await makeSpotifyRequest(
-          `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-          token
-        );
-      }
-      
-      if (!searchResponse.ok) {
-        console.error('Failed to search track');
-        return null;
-      }
-      
-      const searchData = await searchResponse.json();
-      if (searchData.tracks.items.length === 0) {
+      if (!spotifyTrack) {
         console.log('No track found for:', query);
         return null;
       }
       
-      const spotifyTrack = searchData.tracks.items[0];
       const spotifyUri = spotifyTrack.uri;
       const imageUrl = spotifyTrack.album.images[0]?.url || '/assets/images/spotifyLoading.jpg';
       
@@ -395,12 +475,41 @@ const useSpotify = () => {
     }
   };
 
+  // 캐시 관리 함수들
+  const clearCache = (): void => {
+    localStorage.removeItem(CACHE_KEY);
+    console.log('Spotify 캐시가 삭제되었습니다.');
+  };
+
+  const getCacheStats = (): { total: number; expired: number; valid: number } => {
+    const cache = getCache();
+    const now = Date.now();
+    let expired = 0;
+    let valid = 0;
+    
+    Object.values(cache).forEach(item => {
+      if (now > item.expiresAt) {
+        expired++;
+      } else {
+        valid++;
+      }
+    });
+    
+    return {
+      total: Object.keys(cache).length,
+      expired,
+      valid
+    };
+  };
+
   return {
     refreshAccessToken,
     searchTracks,
     handleTrackClick,
     handleMusicClick,
-    fetchSpotifyTrackInfo
+    fetchSpotifyTrackInfo,
+    clearCache,
+    getCacheStats
   };
 };
 
