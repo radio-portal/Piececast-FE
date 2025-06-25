@@ -39,7 +39,7 @@ const makeSpotifyPutRequest = async (url: string, token: string, body?: any, ret
   
   if (response.status === 429) {
     const retryAfter = response.headers.get('Retry-After');
-    const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 5000;
+    const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 1000;
     console.log(`Rate limited. Waiting ${waitTime}ms before retry. (Attempt ${retryCount + 1})`);
     await new Promise(resolve => setTimeout(resolve, waitTime));
     

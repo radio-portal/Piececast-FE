@@ -42,6 +42,7 @@ const Episode = () => {
 				/>
 				<PieceList
 					pieceId={pieceId ? Number(pieceId) : 0}
+					programInfo={episode}
 					tags={tags}
 					selected={selected}
 					handleTagSelect={handleTagSelect}

@@ -3,14 +3,16 @@ import SummaryPlayButton from "@/assets/SummaryPlayButton";
 import usePiece from "@/hooks/usePiece";
 import type { PieceProps } from "@/pages/episode/types";
 
-const Piece = ({ pieceId, item, handleTagSelect, selected, currentTrack, isPlaying, setCurrentTrack, setIsPlaying }: PieceProps) => {
-  const { isActive, isOpen, handleToggle, musicSpotifyData, handleMusicClickWrapper } = usePiece({ 
+const Piece = ({ pieceId, currentPieceId, item, programInfo, handleTagSelect, selected, currentTrack, isPlaying, setCurrentTrack, setIsPlaying }: PieceProps) => {
+  const { isActive, isOpen, handleToggle, musicSpotifyData, handleMusicClickWrapper, handlePieceClick } = usePiece({ 
     item, 
+    programInfo,
     pieceId, 
+    currentPieceId,
     currentTrack, 
     setCurrentTrack, 
     isPlaying, 
-    setIsPlaying 
+    setIsPlaying,
   });
 
   return (
@@ -18,7 +20,7 @@ const Piece = ({ pieceId, item, handleTagSelect, selected, currentTrack, isPlayi
     <div className="w-full flex items-center justify-start gap-[22px] border-t border-gray-200 px-[22px]">
       <div 
         className="cursor-pointer"
-        onClick={() => {}}
+        onClick={handlePieceClick}
       >
         <SummaryPlayButton active={isActive} />
       </div>
