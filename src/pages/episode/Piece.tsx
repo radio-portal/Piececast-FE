@@ -68,14 +68,14 @@ const Piece = ({ pieceId, currentPieceId, item, programInfo, handleTagSelect, se
             <p className="font-semibold leading-none">내용 요약</p>
             <p className="text-gray5 text-[14px] leading-none">{item.summary}</p>
           </div>
-          {/* <div className="w-full flex flex-col items-start justify-start gap-[6px]">
+          <div className="w-full flex flex-col items-start justify-start gap-[6px]">
             <p className="font-semibold">사연 요약</p>
             <p className="text-gray5 text-[14px] text-left">
-              {item.content.stories.split('\n').map((story: string, idx: number) => (
-                <span key={idx}>{story}<br/></span>
+              {item.stories.map((story: any, idx: number) => (
+                <p key={idx}>{story.listenerName} : {story.content}</p>
               ))}
             </p>
-          </div> */}
+          </div>
           <div className="w-full flex flex-col items-start justify-start gap-[6px]">
             <p className="font-semibold">음악 정보</p>
             <div className="w-full flex items-start justify-start gap-[20px]">
