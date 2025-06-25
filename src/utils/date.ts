@@ -6,5 +6,5 @@ export const formatDateWithWeekday = (dateString: string): string => {
   const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
   const weekday = weekdays[date.getDay()];
   
-  return `${year}년 ${month}월 ${day}일 [${weekday}요일]`;
+  return `${year}년 ${month}월 ${day}일 ${weekday}요일`;
 }; 

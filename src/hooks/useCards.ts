@@ -10,6 +10,7 @@
       const fetchCards = async () => {
         try {
           const response = await get('/programs/latest');
+          console.log('response', response.data);
           setCards(response.data);
           
           const newMainCards: Card[][] = Array.from({ length: 3 }, () => []);

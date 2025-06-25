@@ -1,21 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
 import SummaryPlayButton from "@/assets/SummaryPlayButton";
 import { motion, AnimatePresence } from "framer-motion";
-
-interface Track {
-  id: number;
-  title: string;
-  artist: string;
-  image: string;
-  spotifyUri?: string;
-}
-
-interface Device {
-  id: string;
-  is_active: boolean;
-  name: string;
-  type: string;
-}
+import useSpotify from '@/hooks/useSpotify';
+import type { Track } from '@/pages/episode/types';
 
 interface SummaryProps {
   currentTrack: string | null;
@@ -23,42 +10,6 @@ interface SummaryProps {
   isPlaying: boolean;
   setIsPlaying: (isPlaying: boolean) => void;
 }
-
-const refreshAccessToken = async () => {
-  const refreshToken = localStorage.getItem('spotify_refresh_token');
-  const clientId = localStorage.getItem('spotify_client_id');
-  
-  if (!refreshToken || !clientId) {
-    console.error('No refresh token or client ID found');
-    return null;
-  }
-
-  try {
-    const response = await fetch('https://accounts.spotify.com/api/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + btoa(clientId + ':' + import.meta.env.VITE_CLIENT_SECRET)
-      },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken
-      })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem('spotify_access_token', data.access_token);
-      return data.access_token;
-    } else {
-      console.error('Failed to refresh token');
-      return null;
-    }
-  } catch (error) {
-    console.error('Error refreshing token:', error);
-    return null;
-  }
-};
 
 export const Summary = ({ currentTrack, setCurrentTrack, isPlaying, setIsPlaying }: SummaryProps) => {
   const tags = ['게스트', '사연', '정보', '퀴즈', '연애', '건강', '음악'];
@@ -164,6 +115,8 @@ export const Summary = ({ currentTrack, setCurrentTrack, isPlaying, setIsPlaying
     }
   ]);
 
+  const { searchTracks, handleTrackClick } = useSpotify();
+
   const handleTagSelect = (tag: string) => {
     setSelected((prev) =>
       prev.includes(tag)
@@ -179,217 +132,30 @@ export const Summary = ({ currentTrack, setCurrentTrack, isPlaying, setIsPlaying
     }));
   };
 
-  const handleTrackClick = async (track: Track) => {
-    console.log('Track clicked:', track);
-
-    if (!track.spotifyUri) {
-      console.log('No Spotify URI found for track');
-      return;
-    }
-
-    let token = localStorage.getItem('spotify_access_token');
-    if (!token) {
-      console.log('No Spotify token found');
-      return;
-    }
-
-    try {
-      let devicesResponse = await fetch('https://api.spotify.com/v1/me/player/devices', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (devicesResponse.status === 401) {
-        console.log('Token expired, refreshing...');
-        token = await refreshAccessToken();
-        if (!token) {
-          console.error('Failed to refresh token');
-          return;
-        }
-
-        devicesResponse = await fetch('https://api.spotify.com/v1/me/player/devices', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-      }
-
-      const devicesData = await devicesResponse.json();
-      console.log('Available devices:', devicesData);
-
-      let activeDevice = devicesData.devices.find((device: Device) => device.is_active);
-      
-      if (!activeDevice && devicesData.devices.length > 0) {
-        activeDevice = devicesData.devices[0];
-        await fetch(`https://api.spotify.com/v1/me/player`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            device_ids: [activeDevice.id],
-            play: false
-          })
-        });
-      }
-
-      if (!activeDevice) {
-        console.error('No available devices found');
-        return;
-      }
-
-      if (currentTrack === track.spotifyUri) {
-        const action = isPlaying ? 'pause' : 'play';
-        let playResponse = await fetch(`https://api.spotify.com/v1/me/player/${action}?device_id=${activeDevice.id}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (playResponse.status === 401) {
-          console.log('Token expired, refreshing...');
-          token = await refreshAccessToken();
-          if (!token) {
-            console.error('Failed to refresh token');
-            return;
-          }
-
-          playResponse = await fetch(`https://api.spotify.com/v1/me/player/${action}?device_id=${activeDevice.id}`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
-        }
-
-        if (playResponse.ok) {
-          setIsPlaying(!isPlaying);
-        }
-      } else {
-        let playResponse = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${activeDevice.id}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            uris: [track.spotifyUri]
-          })
-        });
-
-        if (playResponse.status === 401) {
-          console.log('Token expired, refreshing...');
-          token = await refreshAccessToken();
-          if (!token) {
-            console.error('Failed to refresh token');
-            return;
-          }
-
-          playResponse = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${activeDevice.id}`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              uris: [track.spotifyUri]
-            })
-          });
-        }
-
-        if (playResponse.ok) {
-          setCurrentTrack(track.spotifyUri);
-          setIsPlaying(true);
-        }
-      }
-
-    } catch (error) {
-      console.error('Error playing track:', error);
-    }
+  // 트랙 클릭 핸들러 (useSpotify 사용)
+  const onTrackClick = (track: Track) => {
+    handleTrackClick(track, currentTrack, setCurrentTrack, isPlaying, setIsPlaying);
   };
 
   useEffect(() => {
-    const searchTracks = async () => {
-      let token = localStorage.getItem('spotify_access_token');
-      console.log('Initial Spotify Token:', token);
-
-      if (!token) {
-        console.log('No Spotify token found');
-        return;
-      }
-
-      const updatedItems = await Promise.all(
-        summaryItems.map(async (item) => {
-          try {
-            const query = `${item.content.music.title} ${item.content.music.artist}`;
-            console.log('Searching for:', query);
-
-            let response = await fetch(
-              `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-              {
-                headers: {
-                  'Authorization': `Bearer ${token}`
-                }
-              }
-            );
-
-            if (response.status === 401) {
-              console.log('Token expired, refreshing...');
-              token = await refreshAccessToken();
-              if (!token) {
-                console.error('Failed to refresh token');
-                return item;
-              }
-
-              response = await fetch(
-                `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`,
-                {
-                  headers: {
-                    'Authorization': `Bearer ${token}`
-                  }
-                }
-              );
-            }
-
-            if (response.ok) {
-              const data = await response.json();
-              console.log('Search Result:', data);
-
-              if (data.tracks.items.length > 0) {
-                const spotifyTrack = data.tracks.items[0];
-                console.log('Found track:', spotifyTrack);
-
-                return {
-                  ...item,
-                  content: {
-                    ...item.content,
-                    music: {
-                      ...item.content.music,
-                      image: spotifyTrack.album.images[0]?.url || item.content.music.image,
-                      spotifyUri: spotifyTrack.uri
-                    }
-                  }
-                };
-              }
-            }
-            return item;
-          } catch (error) {
-            console.error(`Error searching track ${item.content.music.title}:`, error);
-            return item;
+    // 트랙 검색 (useSpotify 사용)
+    searchTracks(
+      summaryItems as any[],
+      (items) => setSummaryItems(items as typeof summaryItems),
+      (item: any) => `${item.content?.music?.title ?? ''} ${item.content?.music?.artist ?? ''}`,
+      (item: any, spotifyTrack: any) => ({
+        ...item,
+        content: {
+          ...item.content,
+          music: {
+            ...item.content.music,
+            image: spotifyTrack.album.images[0]?.url || item.content.music.image,
+            spotifyUri: spotifyTrack.uri
           }
-        })
-      );
-
-      console.log('Updated Items:', updatedItems);
-      setSummaryItems(updatedItems);
-    };
-
-    searchTracks();
+        }
+      })
+    );
+    // eslint-disable-next-line
   }, []);
 
   // 필터링된 아이템 계산
@@ -430,7 +196,7 @@ export const Summary = ({ currentTrack, setCurrentTrack, isPlaying, setIsPlaying
               <div className="w-full flex items-center justify-start gap-[22px] border-t border-gray-200 px-[22px]">
                 <div 
                   className="cursor-pointer"
-                  onClick={() => handleTrackClick({
+                  onClick={() => onTrackClick({
                     id: parseInt(item.id.replace('item', '')),
                     title: item.content.music.title,
                     artist: item.content.music.artist,
@@ -496,7 +262,7 @@ export const Summary = ({ currentTrack, setCurrentTrack, isPlaying, setIsPlaying
                       <p className="font-semibold">음악 정보</p>
                       <div 
                         className="flex flex-col items-start justify-center w-[120px] cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => handleTrackClick({
+                        onClick={() => onTrackClick({
                           id: parseInt(item.id.replace('item', '')),
                           title: item.content.music.title,
                           artist: item.content.music.artist,

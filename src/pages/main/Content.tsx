@@ -22,7 +22,7 @@ const Content = () => {
               {card.pieces.map((piece, idx) => (
                 <div
                   key={idx}
-                  onClick={() => navigate(`/episode/${card.episodeId}/${piece.pieceId}`, { state: { card: card } })}
+                  onClick={() => navigate(`/episode/${card.episodeId}/${piece.pieceId}`)}
                   className={
                     "text-gray3 font-semibold py-[8px] text-[14px] cursor-pointer " +
                     (idx !== 0 ? "border-t border-gray-200" : "")
