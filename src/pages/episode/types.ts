@@ -30,7 +30,7 @@ export interface PieceProps {
   pieceId: number;
   currentPieceId: number;
   item: any;
-  programInfo: EpisodeApiResponse;
+  programInfo: EpisodeApiResponse | null;
   handleTagSelect: (tag: string) => void;
   selected: string[];
   currentTrack: string | null;
