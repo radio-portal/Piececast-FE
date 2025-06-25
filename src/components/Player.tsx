@@ -47,7 +47,7 @@ const Player = () => {
       </div>
       <div className="w-full h-full px-[25px] grid grid-cols-3 items-center">
         <div className="flex items-center">
-          <img src="https://podcastaddict.com/cache/artwork/thumb/396347" alt="logo" className="w-[54px] h-[54px] rounded-[4px] border border-gray-200 mr-[12px]" />
+          <img src={playerInfo.thumbnailUrl || '/assets/images/spotifyLoading.jpg'} alt="logo" className="w-[54px] h-[54px] rounded-[4px] border border-gray-200 mr-[12px]" />
           <div>
             <p className="font-semibold ">{playerInfo.title}</p>
             <p className="text-sm text-gray7">{playerInfo.programName} • {playerInfo.date}</p>

@@ -12,13 +12,14 @@ interface PlayerContextType {
     title: string;
     programName: string;
     date: string;
+    thumbnailUrl: string;
   };
   playerRef: React.RefObject<any>;
   handleTogglePlay: () => void;
   handleProgress: (state: { played: number; playedSeconds: number }) => void;
   handleDuration: (duration: number) => void;
   handleSeek: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  setPlayerAudio: (pieceId: number, audioPath: string, title: string, programName: string, date: string) => void;
+  setPlayerAudio: (pieceId: number, audioPath: string, title: string, programName: string, date: string, thumbnailUrl: string) => void;
   formatTime: (seconds: number) => string;
   currentPlayingPieceId: number;
 }

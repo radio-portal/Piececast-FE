@@ -7,6 +7,7 @@ interface PlayerInfo {
   title: string;
   programName: string;
   date: string;
+  thumbnailUrl: string;
 }
 
 export const usePlayer = () => {
@@ -19,7 +20,8 @@ export const usePlayer = () => {
     audioPath: '',
     title: '오디오 정보 없음',
     programName: '정보 없음',
-    date: '정보 없음'
+    date: '정보 없음',
+    thumbnailUrl: ''
   });
   const playerRef = useRef<ReactPlayer>(null);
 
@@ -42,7 +44,7 @@ export const usePlayer = () => {
     playerRef.current?.seekTo(seekTime);
   };
 
-  const setPlayerAudio = (pieceId: number, audioPath: string, title: string, programName: string, date: string) => {
+  const setPlayerAudio = (pieceId: number, audioPath: string, title: string, programName: string, date: string, thumbnailUrl: string) => {
     if (playerInfo.pieceId === pieceId && playerInfo.audioPath === audioPath) {
       return;
     }
@@ -52,7 +54,8 @@ export const usePlayer = () => {
       audioPath,
       title,
       programName,
-      date
+      date,
+      thumbnailUrl,
     });
     setPlayed(0);
     setPlayedSeconds(0);

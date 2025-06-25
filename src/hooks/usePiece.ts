@@ -27,7 +27,8 @@ const usePiece = ({ item, programInfo, pieceId, currentPieceId, currentTrack, se
         item.mp3Path,
         item.title,
         programInfo.program.name || '프로그램명',
-        programInfo.episode.date || '날짜'
+        programInfo.episode.date || '날짜',
+        programInfo.program.thumbnailUrl || ''
       );
     }
   };

@@ -70,11 +70,11 @@ const Piece = ({ pieceId, currentPieceId, item, programInfo, handleTagSelect, se
           </div>
           <div className="w-full flex flex-col items-start justify-start gap-[6px]">
             <p className="font-semibold">사연 요약</p>
-            <p className="text-gray5 text-[14px] text-left">
+            <div className="text-gray5 text-[14px] text-left">
               {item.stories.map((story: any, idx: number) => (
                 <p key={idx}>{story.listenerName} : {story.content}</p>
               ))}
-            </p>
+            </div>
           </div>
           <div className="w-full flex flex-col items-start justify-start gap-[6px]">
             <p className="font-semibold">음악 정보</p>
