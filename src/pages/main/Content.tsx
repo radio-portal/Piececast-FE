@@ -19,18 +19,20 @@ const Content = () => {
                 </div>
                 <div className="text-gray9 text-[14px] ">{card.latestEpisodeDate}</div>
               </div>
-              {card.pieces.map((piece, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => navigate(`/episode/${card.episodeId}/${piece.pieceId}`)}
-                  className={
-                    "text-gray3 font-semibold py-[8px] text-[14px] cursor-pointer " +
-                    (idx !== 0 ? "border-t border-gray-200" : "")
-                  }
-                >
-                  {piece.title}
-                </div>
-              ))}
+              {card.pieces
+                .filter((piece) => piece.title && piece.title.trim() !== "")
+                .map((piece, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => navigate(`/episode/${card.episodeId}/${piece.pieceId}`)}
+                    className={
+                      "text-gray3 font-semibold py-[8px] text-[14px] cursor-pointer " +
+                      (idx !== 0 ? "border-t border-gray-200" : "")
+                    }
+                  >
+                    {piece.title}
+                  </div>
+                ))}
             </div>
           ))}
         </div>
