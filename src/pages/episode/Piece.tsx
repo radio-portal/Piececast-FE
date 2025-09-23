@@ -15,6 +15,10 @@ const Piece = ({ pieceId, currentPieceId, item, programInfo, handleTagSelect, se
     setIsPlaying,
   });
 
+  if (!item.title || item.title.trim() === "") {
+    return null;
+  }
+
   return (
     <div key={item.id} className="w-full flex flex-col">
     <div className="w-full flex items-center justify-start gap-[22px] border-t border-gray-200 px-[22px]">
