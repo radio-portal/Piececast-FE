@@ -1,23 +1,68 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCards } from "@/hooks/useCards";
 import type { Card } from "@/types/cards";
 
+type TabType = "music-comedy" | "economy";
+
 const Content = () => {
   const { mainCards } = useCards();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<TabType>("music-comedy");
   
   const filteredPieces = (card: Card) => 
     card.pieces.filter((piece) => piece.title && piece.title.trim() !== "");
 
+  // 선택된 탭에 따라 필터링
+  const filterCardsByTab = (cards: Card[][]) => {
+    return cards.map(col => 
+      col.filter(card => {
+        if (activeTab === "economy") {
+          return card.station.toLowerCase() === "economic";
+        } else {
+          return card.station.toLowerCase() !== "economic";
+        }
+      })
+    );
+  };
+
+  const filteredMainCards = filterCardsByTab(mainCards);
+
   return (
-    <div className="w-full flex gap-[20px] bg-backgroundLight p-[40px] flex-1">
-      {mainCards.map((col, colIdx) => (
-        <div key={colIdx} className="flex-1 flex flex-col gap-[20px]">
-          {col.map((card: Card) => {
-            const validPieces = filteredPieces(card);
-            console.log(card)
-            // pieces 배열에서 imageUrl이 있는 첫 번째 piece 찾기
-            const thumbnailImage = card.pieces.find(piece => piece?.imageUrl)?.imageUrl || 'https://www.paintgarden.com/cdn/shop/products/2E3549.png?v=1658180345';
+    <div className="w-full flex flex-col bg-backgroundLight flex-1">
+      {/* 탭 */}
+      <div className="w-full flex items-center justify-center gap-[8px] pt-[24px] pb-[16px] px-[40px]">
+        <button
+          onClick={() => setActiveTab("music-comedy")}
+          className={`px-[24px] py-[10px] rounded-full font-semibold text-[14px] transition-all ${
+            activeTab === "music-comedy"
+              ? "bg-blue text-white"
+              : "bg-white text-gray6 hover:bg-gray-50"
+          }`}
+        >
+          음악/코미디
+        </button>
+        <button
+          onClick={() => setActiveTab("economy")}
+          className={`px-[24px] py-[10px] rounded-full font-semibold text-[14px] transition-all ${
+            activeTab === "economy"
+              ? "bg-blue text-white"
+              : "bg-white text-gray6 hover:bg-gray-50"
+          }`}
+        >
+          시사/경제
+        </button>
+      </div>
+
+      {/* 카드 목록 */}
+      <div className="w-full flex gap-[20px] px-[40px] pb-[40px]">
+        {filteredMainCards.map((col, colIdx) => (
+          <div key={colIdx} className="flex-1 flex flex-col gap-[20px]">
+            {col.map((card: Card) => {
+              const validPieces = filteredPieces(card);
+              console.log(card)
+              // pieces 배열에서 imageUrl이 있는 첫 번째 piece 찾기
+              const thumbnailImage = card.pieces.find(piece => piece?.imageUrl)?.imageUrl || 'https://www.paintgarden.com/cdn/shop/products/2E3549.png?v=1658180345';
             
             return (
               <div key={card.episodeId} className="flex flex-col w-full bg-white rounded-[5px] overflow-hidden">
@@ -72,9 +117,10 @@ const Content = () => {
                 </div>
               </div>
             );
-          })}
-        </div>
-      ))}
+            })}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
