@@ -1,6 +1,7 @@
 export interface Piece {
   pieceId: number;
   title: string;
+  imageUrl?: string;
 }
 
 export interface Card {
@@ -11,4 +12,5 @@ export interface Card {
   thumbnailUrl: string;
   latestEpisodeDate: string;
   pieces: Piece[];
+  firstPieceImageUrl?: string;
 }

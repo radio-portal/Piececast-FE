@@ -3,7 +3,7 @@ import SummaryPlayButton from "@/assets/SummaryPlayButton";
 import usePiece from "@/hooks/usePiece";
 import type { PieceProps } from "@/pages/episode/types";
 
-const Piece = ({ pieceId, currentPieceId, item, programInfo, handleTagSelect, selected, currentTrack, isPlaying, setCurrentTrack, setIsPlaying }: PieceProps) => {
+const Piece = ({ pieceId, currentPieceId, item, programInfo, handleTagSelect, selected, currentTrack, isPlaying, setCurrentTrack, setIsPlaying, index }: PieceProps) => {
   const { isActive, isOpen, handleToggle, musicSpotifyData, handleMusicClickWrapper, handlePieceClick } = usePiece({ 
     item, 
     programInfo,
@@ -19,44 +19,74 @@ const Piece = ({ pieceId, currentPieceId, item, programInfo, handleTagSelect, se
     return null;
   }
 
+  const thumbnailImage = item.imageUrl || 'https://www.paintgarden.com/cdn/shop/products/2E3549.png?v=1658180345';
+  // const duration = item.duration || '0:00';
+
   return (
     <div key={item.id} className="w-full flex flex-col">
-    <div className="w-full flex items-center justify-start gap-[22px] border-t border-gray-200 px-[22px]">
-      <div 
-        className="cursor-pointer"
-        onClick={handlePieceClick}
-      >
-        <SummaryPlayButton active={isActive} />
+    <div className="w-full flex items-center justify-between gap-[16px] border-t border-gray-200 px-[22px] py-[16px]">
+      {/* 왼쪽: 번호 + 썸네일 + 제목/태그 */}
+      <div className="flex items-center gap-[16px] flex-1">
+        {/* 번호 */}
+        <div className="w-[40px] h-[40px] rounded-full bg-blue/10 flex items-center justify-center flex-shrink-0">
+          <span className="text-blue font-semibold text-[16px]">{index}</span>
+        </div>
+        
+        {/* 썸네일 이미지 */}
+        <img 
+          src={thumbnailImage} 
+          alt={item.title}
+          className="w-[60px] h-[60px] rounded-[5px] object-cover flex-shrink-0"
+        />
+        
+        {/* 제목 + 태그 */}
+        <div onClick={handleToggle} className="flex flex-col items-start justify-center gap-[6px] cursor-pointer flex-1 min-w-0">
+          <p className={`${isActive ? 'text-blue' : 'text-gray7'} font-semibold text-[16px] leading-tight truncate w-full`}>
+            {item.title}
+          </p>
+          <div className="flex items-center gap-[6px] flex-wrap">
+            {item.tags?.map((tag: string) => (
+              <button 
+                key={tag} 
+                className={`px-[12px] py-[2px] border border-gray-200 rounded-full text-[12px] transition-colors ${
+                  selected?.includes(tag) ? 'bg-blue text-white border-blue' : 'bg-white hover:bg-gray-50'
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleTagSelect(tag);
+                }}
+              >
+                #{tag}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
-      <div onClick={handleToggle} className="flex flex-col grow items-start justify-center gap-[2px] py-[18px] cursor-pointer">
-        <p className={`${isActive ? 'text-blue' : 'text-gray7'} font-semibold text-[18px] max-w-[500px] leading-none`}>{item.title}</p>
-        {/* <p className="text-gray7 text-[14px] leading-none">{item.time}</p> */}
-      </div>
-      <div className="flex items-center justify-start gap-[10px] ml-auto">
-        {item.tags?.map((tag: string) => (
-          <button 
-            key={tag} 
-            className={`px-[24px] py-[4px] border border-gray-200 rounded-full text-[14px] transition-colors ${
-              selected?.includes(tag) ? 'bg-blue text-white border-blue' : 'bg-background'
-            }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleTagSelect(tag);
-            }}
-          >
-            #{tag}
-          </button>
-        ))}
-      </div>
-      <div onClick={handleToggle} className="flex items-center justify-start gap-[10px]">
-        <motion.span 
-          className="material-symbols-outlined cursor-pointer" 
-          style={{ fontSize: '32px' }}
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+
+      {/* 오른쪽: 시간 + 플레이 버튼 + 드롭다운 */}
+      <div className="flex items-center gap-[16px] flex-shrink-0">
+        {/* <span className="text-gray-500 text-[14px]">
+          <span className="material-symbols-outlined" style={{ fontSize: '18px', verticalAlign: 'middle' }}>schedule</span>
+          {' '}{duration}
+        </span> */}
+        
+        <div 
+          className="cursor-pointer"
+          onClick={handlePieceClick}
         >
-          keyboard_arrow_down
-        </motion.span>
+          <SummaryPlayButton active={isActive} />
+        </div>
+        
+        <div onClick={handleToggle} className="cursor-pointer">
+          <motion.span 
+            className="material-symbols-outlined" 
+            style={{ fontSize: '28px' }}
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            keyboard_arrow_down
+          </motion.span>
+        </div>
       </div>
     </div>
     <AnimatePresence>

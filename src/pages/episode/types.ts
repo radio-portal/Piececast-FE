@@ -37,6 +37,7 @@ export interface PieceProps {
   isPlaying: boolean;
   setCurrentTrack: (track: string | null) => void;
   setIsPlaying: (isPlaying: boolean) => void;
+  index: number;
 }
 
 export interface Piece {
@@ -45,6 +46,8 @@ export interface Piece {
   summary: string;
   mp3Path: string;
   tags: string[];
+  imageUrl?: string;
+  duration?: string;
   musics: {
     title: string;
     artist: string;

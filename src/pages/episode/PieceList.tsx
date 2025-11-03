@@ -54,7 +54,7 @@ export const PieceList = ({
             선택한 태그와 일치하는 프로그램이 없습니다.
           </div>
         ) : (
-          filteredItems.map((item: any) => (
+          filteredItems.map((item: any, index: number) => (
             <Piece
               key={item.pieceId}
               pieceId={item.pieceId}
@@ -67,6 +67,7 @@ export const PieceList = ({
               isPlaying={isPlaying}
               setCurrentTrack={setCurrentTrack}
               setIsPlaying={setIsPlaying}
+              index={index + 1}
             />  
           ))
         )}
