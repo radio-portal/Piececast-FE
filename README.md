@@ -6,4 +6,4 @@
 <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"> <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white">
 
 ### 소개
-![Image](https://github.com/user-attachments/assets/7245a4c1-cc1a-494c-9413-9556e50b8107)
+![피스캐스트 포스터](https://github.com/user-attachments/assets/7380cda7-0ebc-41ef-97f7-3aa781c1e40a)
